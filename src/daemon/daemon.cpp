@@ -2194,9 +2194,6 @@ void mp::Daemon::create_vm(const CreateRequest* request, grpc::ServerWriter<Crea
             auto network_data_cloud_init_config =
                 make_cloud_init_network_config(default_interface, checked_args.extra_interfaces);
 
-            // Everything went well, add the MAC addresses used in this instance.
-            allocated_mac_addrs = std::move(new_macs);
-
             auto vm_desc = to_machine_desc(request, name, checked_args.mem_size, disk_space, default_interface,
                                            checked_args.extra_interfaces, config->ssh_username, vm_image,
                                            meta_data_cloud_init_config, user_data_cloud_init_config,
@@ -2204,6 +2201,8 @@ void mp::Daemon::create_vm(const CreateRequest* request, grpc::ServerWriter<Crea
 
             config->factory->prepare_instance_image(vm_image, vm_desc);
 
+            // Everything went well, add the MAC addresses used in this instance.
+            allocated_mac_addrs = std::move(new_macs);
             return vm_desc;
         }
         catch (const std::exception& e)
